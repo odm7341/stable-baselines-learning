@@ -1,19 +1,20 @@
-from stable_baselines3.common.env_checker import check_env
-from gridworld import GridWorldEnv as Gridworld
+from stable_baselines3 import A2C
 from easy21 import Easy21
 
-#env = Gridworld(size=4, render_mode="rgb_array")
 env = Easy21()
-check_env(env, warn=True)
+env.reset()
 
-episodes = 20
+model = A2C("MlpPolicy", env, verbose=1)
 
+model.learn(total_timesteps=10000)
+
+episodes = 10
 for episode in range(episodes):
     done = False
     obs = env.reset()
     while not done:
         env.render()
-        action = env.action_space.sample()
+        action, _states = model.predict(obs)
         if action == 0:
             print("action: hit")
         else:

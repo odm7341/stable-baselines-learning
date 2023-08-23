@@ -1,0 +1,69 @@
+import numpy as np
+import gymnasium as gym
+
+class Easy21(gym.Env):
+    metadata = {"render_modes": ["ansi"]}
+
+    def __init__(self):
+        self.action_space = gym.spaces.Discrete(2)
+        self.observation_space = gym.spaces.Tuple(
+            (
+                gym.spaces.Discrete(23),
+                gym.spaces.Discrete(10),
+            )
+        )
+        self.dealer_sum = None
+
+    def _get_obs(self):
+      return (self.player_sum, self.dealer_card)
+    
+    def _get_info(self):
+      return {"dealer_sum": self.dealer_sum}
+    
+    def reset(self, seed=None):
+        super().reset(seed=seed)
+
+        self.player_sum = np.random.randint(1, 11)
+        self.dealer_card = np.random.randint(1, 11)
+        self.dealer_sum = self.dealer_card
+        return self._get_obs(), self._get_info()
+    
+    def _update_dealer_sum(self):
+        card = np.random.randint(1, 11)
+        color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+        self.dealer_sum += (card * color)
+    
+    def step(self, action):
+        assert self.action_space.contains(action)
+        if action == 0: # hit
+            card = np.random.randint(1, 11)
+            color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+            self.player_sum += (card * color)
+            if self.player_sum > 21 or self.player_sum < 1:
+                return self._get_obs(), -1, True, False, self._get_info()
+            else:
+                self._update_dealer_sum()
+                if self.dealer_sum > 21 or self.dealer_sum < 1:
+                    return self._get_obs(), 1, True, False, self._get_info()
+                return self._get_obs(), 0, False, False, self._get_info()
+        else: # stick
+            while 0 < self.dealer_sum < 17: # play out the round
+                self._update_dealer_sum()
+            if self.dealer_sum > 21 or self.dealer_sum < 1:
+                return self._get_obs(), 1, True, False, self._get_info()
+            elif self.dealer_sum > self.player_sum:
+                return self._get_obs(), -1, True, False, self._get_info()
+            elif self.dealer_sum < self.player_sum:
+                return self._get_obs(), 1, True, False, self._get_info()
+            else:
+                return self._get_obs(), 0, True, False, self._get_info()
+            
+    def render(self, mode="ansi"):
+        if mode == "ansi":
+            return self._render_text()
+        else:
+            raise NotImplementedError()
+    
+    def _render_text(self):
+        print(f"Player sum: {self.player_sum}, Dealer card: {self.dealer_card}, Dealer sum: {self.dealer_sum}")
+    
