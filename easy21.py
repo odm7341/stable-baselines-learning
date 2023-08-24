@@ -26,7 +26,7 @@ class Easy21(gym.Env):
     
     def _update_dealer_sum(self):
         card = np.random.randint(1, 11)
-        #color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+        color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
         color = 1
         self.dealer_sum += (card * color)
     
@@ -34,7 +34,7 @@ class Easy21(gym.Env):
         assert self.action_space.contains(action)
         if action == 0: # hit
             card = np.random.randint(1, 11)
-            #color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+            color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
             color = 1
             self.player_sum += (card * color)
             if self.player_sum > 21 or self.player_sum < 1:
