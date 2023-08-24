@@ -6,16 +6,12 @@ class Easy21(gym.Env):
 
     def __init__(self):
         self.action_space = gym.spaces.Discrete(2)
-        self.observation_space = gym.spaces.Tuple(
-            (
-                gym.spaces.Discrete(23),
-                gym.spaces.Discrete(10),
-            )
-        )
+        # observe the player's sum and the dealer's card
+        self.observation_space = gym.spaces.MultiDiscrete(np.array([23, 11]))
         self.dealer_sum = None
 
     def _get_obs(self):
-      return (self.player_sum, self.dealer_card)
+      return np.array([self.player_sum, self.dealer_card])
     
     def _get_info(self):
       return {"dealer_sum": self.dealer_sum}
@@ -30,14 +26,16 @@ class Easy21(gym.Env):
     
     def _update_dealer_sum(self):
         card = np.random.randint(1, 11)
-        color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+        #color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+        color = 1
         self.dealer_sum += (card * color)
     
     def step(self, action):
         assert self.action_space.contains(action)
         if action == 0: # hit
             card = np.random.randint(1, 11)
-            color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+            #color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+            color = 1
             self.player_sum += (card * color)
             if self.player_sum > 21 or self.player_sum < 1:
                 return self._get_obs(), -1, True, False, self._get_info()
