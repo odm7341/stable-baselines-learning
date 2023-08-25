@@ -21,21 +21,21 @@ class Easy21(gym.Env):
     def reset(self, seed=None):
         super().reset(seed=seed)
 
-        self.player_sum = np.random.randint(1, 11)
-        self.dealer_card = np.random.randint(1, 11)
+        self.player_sum = self.np_random.integers(1, 10, endpoint=True)
+        self.dealer_card = self.np_random.integers(1, 10, endpoint=True)
         self.dealer_sum = self.dealer_card
         return self._get_obs(), self._get_info()
     
     def _update_dealer_sum(self):
-        card = np.random.randint(1, 11)
-        color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+        card = self.np_random.integers(1, 10, endpoint=True)
+        color = self.np_random.choice([-1, 1], p=[1 / 3, 2 / 3])
         self.dealer_sum += (card * color)
     
     def step(self, action):
         assert self.action_space.contains(action)
         if action == 0: # hit
-            card = np.random.randint(1, 11)
-            color = np.random.choice([-1, 1], p=[1 / 3, 2 / 3])
+            card = self.np_random.integers(1, 10, endpoint=True)
+            color = self.np_random.choice([-1, 1], p=[1 / 3, 2 / 3])
             self.player_sum += (card * color)
             if self.player_sum > 21 or self.player_sum < 1:
                 return self._get_obs(), -1, True, False, self._get_info()

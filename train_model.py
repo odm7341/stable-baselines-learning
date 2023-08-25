@@ -5,10 +5,13 @@ import time
 env = Easy21()
 env.reset()
 
-
 tensorboard_dir = "./tb_logs/"
 models_dir = "./modelsDQN/"
-model = DQN("MlpPolicy", env, verbose=1, tensorboard_log=tensorboard_dir, device="cpu")
+model = DQN("MlpPolicy", env, 
+            policy_kwargs={"net_arch": [32, 32]},
+            verbose=1, 
+            tensorboard_log=tensorboard_dir, 
+            device="cpu")
 
 timestamp = time.strftime("%Y%m%d-%H%M%S")
 timesteps_per_epoch = 100_000
@@ -25,7 +28,7 @@ wins = 0
 total_ep_len = 0
 for episode in range(episodes):
     done = False
-    obs, info = env.reset()
+    obs, info = env.reset(seed=episode)
     ep_len = 0
     while not done:
         env.render()
