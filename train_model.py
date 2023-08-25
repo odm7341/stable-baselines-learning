@@ -1,12 +1,24 @@
-from stable_baselines3 import PPO, A2C
+from stable_baselines3 import PPO, A2C, DQN
 from easy21 import Easy21
+import time
 
 env = Easy21()
 env.reset()
 
-model = PPO("MlpPolicy", env, verbose=1, device="cpu", tensorboard_log="./tb_logs/")
 
-model.learn(total_timesteps=10000)
+tensorboard_dir = "./tb_logs/"
+models_dir = "./modelsDQN/"
+model = DQN("MlpPolicy", env, verbose=1, tensorboard_log=tensorboard_dir, device="cpu")
+
+timestamp = time.strftime("%Y%m%d-%H%M%S")
+timesteps_per_epoch = 100_000
+epochs = 100
+for epoch in range(epochs):
+    model.learn(total_timesteps=timesteps_per_epoch, reset_num_timesteps=False, tb_log_name=timestamp)
+    model.save(f"./{models_dir}/{timestamp}-{epoch}of{epochs}")
+    print("Epoch:", epoch)
+    print("Timesteps:", (epoch + 1) * timesteps_per_epoch)
+    print("------")
 
 episodes = 100
 wins = 0

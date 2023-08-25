@@ -11,7 +11,9 @@ class Easy21(gym.Env):
         self.dealer_sum = None
 
     def _get_obs(self):
-      return np.array([self.player_sum, self.dealer_card])
+      # clamp the som to be in [0, 22] to avoid negative values and values > 21
+      sum = np.clip(self.player_sum, 0, 22)
+      return np.array([sum, self.dealer_card])
     
     def _get_info(self):
       return {"dealer_sum": self.dealer_sum}
