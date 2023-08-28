@@ -9,18 +9,18 @@ env.reset()
 model_dir_dqn = "./modelsDQN"
 model_dir_ppo = "./modelsPPO"
 
-default_dqn = f"{model_dir_dqn}/20230825-093423-10of100"
-small_dqn = f"{model_dir_dqn}/20230825-113205-2of100"
-default_ppo = f"{model_dir_ppo}/20230824-152451-10of100"
+default_dqn = f"{model_dir_dqn}/20230825-093423-33of100"
+small_dqn = f"{model_dir_dqn}/20230825-113205-53of100"
+default_ppo = f"{model_dir_ppo}/20230824-152451-37of100"
 
 models = [DQN.load(default_dqn), DQN.load(small_dqn), PPO.load(default_ppo)]
 model_results = []
 
-seed = 24
+seed = 2
 
 for model in models:
     model.set_random_seed(seed)
-    episodes = 5
+    episodes = 100
     wins = 0
     total_ep_len = 0
     for episode in range(episodes):
